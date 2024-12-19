@@ -38,3 +38,14 @@ class JobApplication(models.Model):
     class Meta:
         ordering = ['-application_date']
         verbose_name_plural = 'Job Applications'
+
+
+from django.contrib import admin
+from .models import *
+
+@admin.register(JobApplication)
+class JobApplicationAdmin(admin.ModelAdmin):
+    list_display = ('company_name', 'job_title', 'status', 'application_date')
+    list_filter = ('status', 'remote_option')
+    search_fields = ('company_name', 'job_title')
+
