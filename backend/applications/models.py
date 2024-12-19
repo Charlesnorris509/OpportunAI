@@ -49,3 +49,8 @@ class JobApplicationAdmin(admin.ModelAdmin):
     list_filter = ('status', 'remote_option')
     search_fields = ('company_name', 'job_title')
 
+class Meta:
+    indexes = [
+        models.Index(fields=['user', 'created_at']),
+        models.Index(fields=['status', 'application_date']),
+    ]
