@@ -54,6 +54,17 @@ class ApplicationTracker:
             'offers': offers
         }
 
+def application_dashboard(request):
+    analytics = ApplicationAnalytics()
+    stats = analytics.get_user_statistics(request.user)
+    timeline = analytics.get_application_timeline(request.user)
+    
+    context = {
+        'stats': stats,
+        'timeline': timeline,
+    }
+    return render(request, 'dashboard.html', context)
+
 class InterviewManager:
     @staticmethod
     def schedule_interview(application_id, interview_data):
