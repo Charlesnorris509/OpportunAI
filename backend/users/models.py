@@ -4,14 +4,15 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import URLValidator, FileExtensionValidator
 from django.core.exceptions import ValidationError
-from datetime import date
+from datetime import datetime
 import os
+
 
 class UserProfile(models.Model):
     """
     Extended user profile model with professional information and resume details.
     """
-    
+
     class ExperienceLevel(models.TextChoices):
         ENTRY = 'ENTRY', 'Entry Level (0-2 years)'
         MID = 'MID', 'Mid Level (3-5 years)'
@@ -23,14 +24,14 @@ class UserProfile(models.Model):
         ACTIVE = 'ACTIVE', 'Actively Looking'
         PASSIVE = 'PASSIVE', 'Open to Opportunities'
         EMPLOYED = 'EMPLOYED', 'Not Looking'
-        
+
     # Core Fields
     user = models.OneToOneField(
-        User, 
+        User,
         on_delete=models.CASCADE,
         related_name='profile'
     )
-    
+
     # Professional Details
     preferred_job_title = models.CharField(
         max_length=100,
@@ -54,7 +55,7 @@ class UserProfile(models.Model):
         choices=EmploymentStatus.choices,
         default=EmploymentStatus.ACTIVE
     )
-    
+
     # Bio and Social
     bio = models.TextField(
         blank=True,
@@ -75,7 +76,7 @@ class UserProfile(models.Model):
         validators=[URLValidator(schemes=['https', 'http'])],
         help_text="Your portfolio website URL"
     )
-    
+
     # Location and Availability
     location = models.CharField(
         max_length=100,
@@ -96,7 +97,7 @@ class UserProfile(models.Model):
         ],
         default='FLEXIBLE'
     )
-    
+
     # Resume and Documents
     resume_file = models.FileField(
         upload_to='resumes/%Y/%m/',
@@ -108,37 +109,37 @@ class UserProfile(models.Model):
         auto_now=True,
         help_text="Last time resume was updated"
     )
-    
+
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ['-updated_at']
         indexes = [
             models.Index(fields=['experience_level', 'employment_status']),
             models.Index(fields=['user', 'created_at'])
         ]
-        
+
     def __str__(self):
         return f"{self.user.get_full_name() or self.user.username}'s Profile"
-    
+
     def clean(self):
         """Validate model data."""
         if self.linkedin_profile and not self.linkedin_profile.startswith('https://www.linkedin.com/'):
             raise ValidationError({
                 'linkedin_profile': 'Please enter a valid LinkedIn profile URL'
             })
-            
+
         if self.github_profile and not self.github_profile.startswith('https://github.com/'):
             raise ValidationError({
                 'github_profile': 'Please enter a valid GitHub profile URL'
             })
-    
+
     def get_resume_filename(self):
         """Get the filename of the uploaded resume."""
         return os.path.basename(self.resume_file.name) if self.resume_file else None
-    
+
     def get_experience_range(self):
         """Get the experience range based on experience level."""
         ranges = {
@@ -149,7 +150,7 @@ class UserProfile(models.Model):
             'EXECUTIVE': '10+ years'
         }
         return ranges.get(self.experience_level, 'Not specified')
-    
+
     @property
     def is_profile_complete(self):
         """Check if the user profile is complete with essential information."""
@@ -162,12 +163,14 @@ class UserProfile(models.Model):
         ]
         return all(bool(field) for field in required_fields)
 
+
 # Signal handlers
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """Create a UserProfile instance when a new User is created."""
     if created:
         UserProfile.objects.create(user=instance)
+
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
