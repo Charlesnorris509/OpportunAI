@@ -1,0 +1,18 @@
+src/
+├── components/
+│   ├── Profile/
+│   │   ├── ViewProfile.jsx
+│   │   ├── EditProfile.jsx
+│   ├── ResumeUpload/
+│   │   ├── UploadResume.jsx
+│   ├── Dashboard/
+│   │   ├── Dashboard.jsx
+├── pages/
+│   ├── Login.jsx
+│   ├── Signup.jsx
+│   ├── ProfilePage.jsx
+│   ├── DashboardPage.jsx
+├── services/
+│   ├── api.js
+├── App.js
+├── index.js
