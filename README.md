@@ -84,6 +84,40 @@ OpportunAI is an intelligent, AI-driven job application assistant designed to he
 
 ---
 
+## **Front-End Structure**
+
+The front-end of OpportunAI is structured as follows:
+
+```
+src/
+├── components/
+│   ├── Profile/
+│   │   ├── ViewProfile.jsx
+│   │   ├── EditProfile.jsx
+│   ├── ResumeUpload/
+│   │   ├── UploadResume.jsx
+│   ├── Dashboard/
+│   │   ├── Dashboard.jsx
+├── pages/
+│   ├── Login.jsx
+│   ├── Signup.jsx
+│   ├── ProfilePage.jsx
+│   ├── DashboardPage.jsx
+├── services/
+│   ├── api.js
+├── App.js
+├── index.js
+```
+
+### Development Status
+
+- **`components/` folder**: Completed.
+- **Files**:
+  - `DashboardPage.jsx`: Completed.
+  - `ProfilePage.jsx`: Completed.
+
+---
+
 ## **Contributing**
 
 We welcome contributions from the community! To contribute:
@@ -105,6 +139,3 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## **Contact**
 
 For questions or feedback, please email **cnorris7@gmu.edu** or open an issue in the repository.
-
-
-
