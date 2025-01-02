@@ -1,122 +1,124 @@
+// api.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://localhost/api'; // Replace with actual API URL
+const API_BASE_URL = 'http://localhost:5000/api';
 
-// Axios instance for base configuration
-const apiClient = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-/**
- * User Authentication Services
- */
-export const loginUser = async (email, password) => {
+// Authentication
+export const login = async (email, password) => {
     try {
-        const response = await apiClient.post('/auth/login', { email, password });
+        const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-export const signupUser = async (email, password) => {
+export const signup = async (email, password) => {
     try {
-        const response = await apiClient.post('/auth/signup', { email, password });
+        const response = await axios.post(`${API_BASE_URL}/auth/signup`, { email, password });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
 export const forgotPassword = async (email) => {
     try {
-        const response = await apiClient.post('/auth/forgot-password', { email });
+        const response = await axios.post(`${API_BASE_URL}/auth/forgot-password`, { email });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
 export const resetPassword = async (token, newPassword) => {
     try {
-        const response = await apiClient.post(`/auth/reset-password/${token}`, { newPassword });
+        const response = await axios.post(`${API_BASE_URL}/auth/reset-password`, { token, newPassword });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-/**
- * Profile Services
- */
-export const fetchUserProfile = async (userId) => {
+// Profile Management
+export const getProfile = async (token) => {
     try {
-        const response = await apiClient.get(`/profile/${userId}`);
+        const response = await axios.get(`${API_BASE_URL}/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-export const updateUserProfile = async (userId, profileData) => {
+export const updateProfile = async (token, profileData) => {
     try {
-        const response = await apiClient.put(`/profile/${userId}`, profileData);
+        const response = await axios.put(`${API_BASE_URL}/profile`, profileData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-/**
- * Resume Upload Services
- */
-export const uploadResume = async (userId, resumeFile) => {
+// Resume Upload
+export const uploadResume = async (token, formData) => {
     try {
-        const formData = new FormData();
-        formData.append('file', resumeFile);
-
-        const response = await apiClient.post(`/resume/upload/${userId}`, formData, {
+        const response = await axios.post(`${API_BASE_URL}/resume/upload`, formData, {
             headers: {
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data',
             },
         });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-/**
- * Application Tracking Services
- */
-export const fetchApplications = async (userId) => {
+// Application Tracking
+export const getApplications = async (token) => {
     try {
-        const response = await apiClient.get(`/applications/${userId}`);
+        const response = await axios.get(`${API_BASE_URL}/applications`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-export const addApplication = async (userId, applicationData) => {
+export const addApplication = async (token, applicationData) => {
     try {
-        const response = await apiClient.post(`/applications/${userId}`, applicationData);
+        const response = await axios.post(`${API_BASE_URL}/applications`, applicationData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-export const deleteApplication = async (userId, applicationId) => {
+export const updateApplication = async (token, applicationId, applicationData) => {
     try {
-        const response = await apiClient.delete(`/applications/${userId}/${applicationId}`);
+        const response = await axios.put(`${API_BASE_URL}/applications/${applicationId}`, applicationData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : error;
+        throw error.response.data;
     }
 };
 
-export default apiClient;
+export const deleteApplication = async (token, applicationId) => {
+    try {
+        const response = await axios.delete(`${API_BASE_URL}/applications/${applicationId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response.data;
+    }
+};
