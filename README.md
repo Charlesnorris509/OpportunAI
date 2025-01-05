@@ -1,10 +1,10 @@
 # OpportunAI
 
-OpportunAI is an intelligent, AI-driven job application assistant designed to help you streamline your job search and boost your career prospects. With features tailored to modern job seekers, OpportunAI simplifies everything from crafting resumes and cover letters to tracking applications and preparing for interviews.
+OpportunAI is an intelligent, AI-driven job application assistant designed to help you streamline your job search and boost your career prospects. With features tailored to modern job seekers, OpportunAI simplifies everything from crafting resumes and cover letters to tracking application statuses and preparing for interviews.
 
 ---
 
-## **Features**
+## Features
 
 ### AI-Powered Resume & Cover Letter Generator
 - Create personalized resumes and cover letters tailored to specific job descriptions.
@@ -26,7 +26,7 @@ OpportunAI is an intelligent, AI-driven job application assistant designed to he
 
 ---
 
-## **Installation**
+## Installation
 
 ### Prerequisites
 - Python 3.8+
@@ -74,7 +74,7 @@ OpportunAI is an intelligent, AI-driven job application assistant designed to he
 
 ---
 
-## **Usage**
+## Usage
 
 1. **Sign Up or Log In**: Create a user profile to start managing your applications.
 2. **Upload Your Resume**: OpportunAI will use it as a baseline for generating tailored resumes.
@@ -84,9 +84,10 @@ OpportunAI is an intelligent, AI-driven job application assistant designed to he
 
 ---
 
-## **Front-End Structure**
+## Front-End Structure
 
 The front-end of OpportunAI is structured as follows:
+
 
 ```
 src/
@@ -118,7 +119,7 @@ src/
 
 ---
 
-## **Contributing**
+## Contributing
 
 We welcome contributions from the community! To contribute:
 1. Fork the repository and create a new branch:
@@ -130,12 +131,12 @@ We welcome contributions from the community! To contribute:
 
 ---
 
-## **License**
+## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
 
-## **Contact**
+## Contact
 
 For questions or feedback, please email **cnorris7@gmu.edu** or open an issue in the repository.
