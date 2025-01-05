@@ -28,6 +28,12 @@ class ResumeGenerator:
         if not UserSkill.objects.filter(user=user_profile).exists():
             raise ValidationError("User profile must have at least one skill.")
         
+        if not user_profile.email or not "@" in user_profile.email:
+            raise ValidationError("A valid email address is required.")
+        
+        if not user_profile.full_name:
+            raise ValidationError("Full name is required.")
+        
     def _format_skills(self, skills: list[UserSkill]) -> str:
         """Format user skills into a readable string."""
         if not skills:
@@ -51,6 +57,8 @@ class ResumeGenerator:
         Current Role: {user_profile.preferred_job_title}
         Education: {user_profile.education if hasattr(user_profile, 'education') else 'Not specified'}
         Achievements: {achievements}
+        Email: {user_profile.email}
+        Full Name: {user_profile.full_name}
         
         Requirements:
         1. Highlight skills and experiences most relevant to the job description.
