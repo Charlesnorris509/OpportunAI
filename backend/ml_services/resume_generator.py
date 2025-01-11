@@ -8,7 +8,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class ResumeGenerator:
     """Service for generating tailored resumes using OpenAI's GPT models."""
     
@@ -28,7 +27,7 @@ class ResumeGenerator:
         if not UserSkill.objects.filter(user=user_profile).exists():
             raise ValidationError("User profile must have at least one skill.")
         
-        if not user_profile.email or not "@" in user_profile.email:
+        if not user_profile.email or "@" not in user_profile.email:
             raise ValidationError("A valid email address is required.")
         
         if not user_profile.full_name:
@@ -36,14 +35,13 @@ class ResumeGenerator:
         
     def _format_skills(self, skills: list[UserSkill]) -> str:
         """Format user skills into a readable string."""
-        if not skills:
-            return "No specific skills listed."
-        
-        return ", ".join([f"{skill.skill.name} ({skill.proficiency})" for skill in skills])
+        return ", ".join(f"{skill.skill.name} ({skill.proficiency})" for skill in skills) or "No specific skills listed."
     
     def _create_prompt(self, user_profile: UserProfile, job_description: str, skills_text: str) -> str:
         """Create the prompt for the AI model."""
-        achievements = user_profile.achievements if hasattr(user_profile, 'achievements') else "Not specified"
+        achievements = getattr(user_profile, 'achievements', 'Not specified')
+        education = getattr(user_profile, 'education', 'Not specified')
+        
         return f"""
         Create a professional resume tailored for the following job:
 
@@ -55,7 +53,7 @@ class ResumeGenerator:
         
         Experience: {user_profile.years_of_experience} years
         Current Role: {user_profile.preferred_job_title}
-        Education: {user_profile.education if hasattr(user_profile, 'education') else 'Not specified'}
+        Education: {education}
         Achievements: {achievements}
         Email: {user_profile.email}
         Full Name: {user_profile.full_name}
@@ -94,7 +92,7 @@ class ResumeGenerator:
             self._validate_inputs(user_profile, job_description)
             
             # Fetch user skills
-            skills = UserSkill.objects.filter(user=user_profile)
+            skills = await UserSkill.objects.filter(user=user_profile).all()
             skills_text = self._format_skills(skills)
             
             # Create prompt
