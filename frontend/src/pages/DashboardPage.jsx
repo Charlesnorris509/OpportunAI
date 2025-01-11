@@ -1,96 +1,174 @@
-import React, { useState } from "react";
-import Dashboard from "../Dashboard/Dashboard";
-import { Box, Typography, Grid, Paper, Switch, TextField, Button } from "@mui/material";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import React, { useState, useEffect } from 'react';
+import './Dashboard.css';
+import {
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  CircularProgress,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon
+} from '@mui/material';
+import {
+  Timeline,
+  Person,
+  Business,
+  WorkOutline,
+  TrendingUp,
+  Assessment
+} from '@mui/icons-material';
 
-const DashboardPage = () => {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [jobSearchTerm, setJobSearchTerm] = useState("");
-  const [jobSuggestions, setJobSuggestions] = useState([]);
+const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    applications: 0,
+    interviews: 0,
+    connections: 0,
+    profileViews: 0
+  });
 
-  const handleNotificationToggle = () => {
-    setNotificationsEnabled(!notificationsEnabled);
-  };
+  // Simulating data loading
+  useEffect(() => {
+    const fetchData = async () => {
+      // Simulated API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setStats({
+        applications: 42,
+        interviews: 8,
+        connections: 150,
+        profileViews: 324
+      });
+      setIsLoading(false);
+    };
 
-  const handleJobSearch = () => {
-    // Mock job search functionality
-    const mockJobs = [
-      "Frontend Developer at TechCorp",
-      "Data Engineer at AnalyticsHub",
-      "Full Stack Developer at InnovateX",
-    ];
-    setJobSuggestions(mockJobs.filter((job) => job.toLowerCase().includes(jobSearchTerm.toLowerCase())));
-  };
+    fetchData();
+  }, []);
+
+  const recentActivities = [
+    {
+      title: "Application Submitted",
+      company: "TechCorp",
+      position: "Senior Frontend Developer",
+      date: "2 hours ago",
+      icon: <WorkOutline />
+    },
+    {
+      title: "Profile Updated",
+      description: "Added new skills and projects",
+      date: "1 day ago",
+      icon: <Person />
+    },
+    {
+      title: "New Connection",
+      company: "InnovateX",
+      description: "Connected with Technical Recruiter",
+      date: "2 days ago",
+      icon: <Business />
+    }
+  ];
+
+  const StatsCard = ({ title, value, icon }) => (
+    <Card className="stats-card dashboard-paper">
+      <CardContent>
+        <Box className="stats-content">
+          {icon}
+          <Box className="stats-details">
+            <Typography variant="h6" className="stats-value">
+              {value}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {title}
+            </Typography>
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+
+  if (isLoading) {
+    return (
+      <Box className="loading-container">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Dashboard
-      </Typography>
-      <Grid container spacing={4}>
-        {/* Main Dashboard Content */}
-        <Grid item xs={12} md={8}>
-          <Dashboard />
+    <Box className="dashboard-main">
+      {/* Stats Section */}
+      <Grid container spacing={3} className="stats-grid">
+        <Grid item xs={12} sm={6} md={3}>
+          <StatsCard
+            title="Applications"
+            value={stats.applications}
+            icon={<Assessment className="stats-icon" />}
+          />
         </Grid>
-
-        {/* Notifications & Job Search */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ padding: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Notifications
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                mb: 2,
-              }}
-            >
-              <Typography>Enable Notifications</Typography>
-              <Switch
-                checked={notificationsEnabled}
-                onChange={handleNotificationToggle}
-                color="primary"
-              />
-            </Box>
-            {notificationsEnabled && (
-              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <NotificationsActiveIcon sx={{ color: "#f57c00", mr: 2 }} />
-                <Typography variant="body1">You have 3 new notifications.</Typography>
-              </Box>
-            )}
-          </Paper>
-          <Paper elevation={3} sx={{ padding: 3, mt: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Quick Job Search
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search for jobs..."
-              value={jobSearchTerm}
-              onChange={(e) => setJobSearchTerm(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-            <Button variant="contained" color="primary" onClick={handleJobSearch}>
-              Search
-            </Button>
-            {jobSuggestions.length > 0 && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1">Suggestions:</Typography>
-                {jobSuggestions.map((job, index) => (
-                  <Typography key={index} variant="body2" sx={{ mt: 1 }}>
-                    {job}
-                  </Typography>
-                ))}
-              </Box>
-            )}
-          </Paper>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatsCard
+            title="Interviews"
+            value={stats.interviews}
+            icon={<Timeline className="stats-icon" />}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatsCard
+            title="Connections"
+            value={stats.connections}
+            icon={<Person className="stats-icon" />}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatsCard
+            title="Profile Views"
+            value={stats.profileViews}
+            icon={<TrendingUp className="stats-icon" />}
+          />
         </Grid>
       </Grid>
+
+      {/* Activity Timeline */}
+      <Paper elevation={3} className="dashboard-paper activity-section">
+        <Typography variant="h6" className="section-title">
+          Recent Activity
+        </Typography>
+        <List>
+          {recentActivities.map((activity, index) => (
+            <ListItem key={index} className="activity-item">
+              <ListItemIcon className="activity-icon">
+                {activity.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={activity.title}
+                secondary={
+                  <React.Fragment>
+                    {activity.company && (
+                      <Typography component="span" className="company-name">
+                        {activity.company}
+                        {activity.position && ` - ${activity.position}`}
+                      </Typography>
+                    )}
+                    {activity.description && (
+                      <Typography component="p" className="activity-description">
+                        {activity.description}
+                      </Typography>
+                    )}
+                    <Typography component="span" className="activity-date">
+                      {activity.date}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
     </Box>
   );
 };
 
-export default DashboardPage;
+export default Dashboard;
