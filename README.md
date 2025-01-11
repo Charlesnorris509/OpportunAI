@@ -2,8 +2,6 @@
 
 OpportunAI is an intelligent, AI-driven job application assistant designed to help you streamline your job search and boost your career prospects. With features tailored to modern job seekers, OpportunAI simplifies everything from crafting resumes and cover letters to tracking application statuses and preparing for interviews.
 
----
-
 ## Features
 
 ### AI-Powered Resume & Cover Letter Generator
@@ -23,8 +21,6 @@ OpportunAI is an intelligent, AI-driven job application assistant designed to he
 ### Career Insights & Analytics
 - Visualize application trends with detailed charts and insights.
 - Highlight areas for improvement in your job search strategy.
-
----
 
 ## Installation
 
@@ -72,8 +68,6 @@ OpportunAI is an intelligent, AI-driven job application assistant designed to he
     ```
     Access the application at `http://localhost:8000`.
 
----
-
 ## Usage
 
 1. **Sign Up or Log In**: Create a user profile to start managing your applications.
@@ -81,8 +75,6 @@ OpportunAI is an intelligent, AI-driven job application assistant designed to he
 3. **Search Jobs**: Use the job description parser to extract insights from postings.
 4. **Track Your Applications**: Add job applications to the tracker and stay updated on their status.
 5. **Prepare for Interviews**: Use AI-powered tools for customized interview prep.
-
----
 
 ## Front-End Structure
 
@@ -116,6 +108,10 @@ src/
 - **Files**:
   - `DashboardPage.jsx`: Completed.
   - `ProfilePage.jsx`: Completed.
+  - `Login.jsx`: Completed.
+  - `ResetPassword.jsx`: Completed.
+  - `SignUp.jsx`: Completed.
+  - `EditProfile.jsx`: Completed.
 
 ---
 
