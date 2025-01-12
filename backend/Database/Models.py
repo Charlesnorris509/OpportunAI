@@ -1,9 +1,16 @@
 # models.py
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 import uuid
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from pgvector.django import VectorField
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+# Initialize the sentence transformer model
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -14,51 +21,41 @@ class UserProfile(models.Model):
     portfolio_url = models.URLField(blank=True)
     preferred_job_title = models.CharField(max_length=100, blank=True)
     years_of_experience = models.IntegerField(default=0)
+    profile_embedding = VectorField(dimensions=384, null=True)  # Added vector field
     
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
+    def generate_profile_embedding(self):
+        profile_text = f"{self.preferred_job_title} {self.location}"
+        return model.encode(profile_text)
+    
+    def save(self, *args, **kwargs):
+        self.profile_embedding = self.generate_profile_embedding()
+        super().save(*args, **kwargs)
 
 class Resume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    content = models.TextField()  # Store the resume content
+    content = models.TextField()
+    content_embedding = VectorField(dimensions=384, null=True)  # Added vector field
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     file = models.FileField(upload_to='resumes/', null=True, blank=True)
     version = models.IntegerField(default=1)
     generated_for = models.ForeignKey(
-        'JobApplication', 
-        on_delete=models.SET_NULL, 
-        null=True, 
+        'JobApplication',
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
         related_name='generated_resumes'
     )
     
-    class Meta:
-        ordering = ['-updated_at']
-
-class Skill(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    category = models.CharField(max_length=50, blank=True)
+    def generate_content_embedding(self):
+        return model.encode(f"{self.title} {self.content}")
     
-    def __str__(self):
-        return self.name
-
-class UserSkill(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    proficiency_level = models.IntegerField(choices=[
-        (1, 'Beginner'),
-        (2, 'Intermediate'),
-        (3, 'Advanced'),
-        (4, 'Expert')
-    ])
-    years_experience = models.FloatField(default=0)
-    
-    class Meta:
-        unique_together = ['user', 'skill']
+    def save(self, *args, **kwargs):
+        self.content_embedding = self.generate_content_embedding()
+        super().save(*args, **kwargs)
 
 class JobApplication(models.Model):
     STATUS_CHOICES = [
@@ -75,6 +72,7 @@ class JobApplication(models.Model):
     company_name = models.CharField(max_length=200)
     job_title = models.CharField(max_length=200)
     job_description = models.TextField()
+    job_embedding = VectorField(dimensions=384, null=True)  # Added vector field
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='SAVED')
     application_date = models.DateTimeField(null=True, blank=True)
     job_posting_url = models.URLField(blank=True)
@@ -86,66 +84,23 @@ class JobApplication(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.job_title} at {self.company_name}"
+    def generate_job_embedding(self):
+        job_text = f"{self.job_title} {self.company_name} {self.job_description}"
+        return model.encode(job_text)
+    
+    def save(self, *args, **kwargs):
+        self.job_embedding = self.generate_job_embedding()
+        super().save(*args, **kwargs)
 
-class Interview(models.Model):
-    INTERVIEW_TYPE_CHOICES = [
-        ('PHONE', 'Phone Screen'),
-        ('VIDEO', 'Video Call'),
-        ('ONSITE', 'On-site'),
-        ('TECHNICAL', 'Technical'),
-        ('BEHAVIORAL', 'Behavioral'),
-        ('COGNITIVE', 'Cognitive')
-    ]
-    
-    application = models.ForeignKey(JobApplication, on_delete=models.CASCADE)
-    interview_type = models.CharField(max_length=20, choices=INTERVIEW_TYPE_CHOICES)
-    scheduled_date = models.DateTimeField()
-    interviewer_name = models.CharField(max_length=200, blank=True)
-    interviewer_title = models.CharField(max_length=200, blank=True)
-    location = models.CharField(max_length=200, blank=True)  # Could be link for virtual interviews
-    notes = models.TextField(blank=True)
-    feedback = models.TextField(blank=True)
-    
-    class Meta:
-        ordering = ['scheduled_date']
+    @staticmethod
+    def find_similar_jobs(query_text, limit=5):
+        query_embedding = model.encode(query_text)
+        return JobApplication.objects.order_by(
+            models.F('job_embedding').cosine_distance(query_embedding)
+        )[:limit]
 
-class Document(models.Model):
-    DOCUMENT_TYPE_CHOICES = [
-        ('RESUME', 'Resume'),
-        ('COVER_LETTER', 'Cover Letter'),
-        ('PORTFOLIO', 'Portfolio'),
-        ('OTHER', 'Other')
-    ]
-    
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, null=True, blank=True)
-    document_type = models.CharField(max_length=20, choices=DOCUMENT_TYPE_CHOICES)
-    title = models.CharField(max_length=200)
-    file = models.FileField(upload_to='documents/')
-    created_at = models.DateTimeField(auto_now_add=True)
-    version = models.IntegerField(default=1)
-    notes = models.TextField(blank=True)
-    
-    class Meta:
-        ordering = ['-created_at']
-
-class ApplicationLog(models.Model):
-    application = models.ForeignKey(JobApplication, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    action = models.CharField(max_length=100)
-    details = models.TextField(blank=True)
-    
-    class Meta:
-        ordering = ['-timestamp']
-
-class ResumeTemplate(models.Model):
-    name = models.CharField(max_length=100)
-    content = models.TextField()  # Template content with placeholders
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return self.name
+# Example usage function for finding matching resumes for a job
+def find_matching_resumes(job_application, limit=5):
+    return Resume.objects.filter(is_active=True).order_by(
+        models.F('content_embedding').cosine_distance(job_application.job_embedding)
+    )[:limit]
