@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 4rem; background-color: #f9f9f9; min-height: 100vh;">
+    <h4 style="margin-bottom: 4rem;">Welcome, {{ user_name }}</h4>
+    <div class="row">
+        <!-- Profile Widget -->
+        <div class="col-md-4">
+            <div class="card" style="padding: 3rem; text-align: center;">
+                <img src="{{ user_avatar_url }}" alt="Avatar" class="avatar" style="width: 80px; height: 80px; margin: auto;">
+                <h6 style="margin-top: 2rem;">{{ user_name }}</h6>
+                <p class="text-secondary">Full Stack Developer</p>
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary" style="margin-top: 2rem;">Edit Profile</a>
+            </div>
+        </div>
+
+        <!-- Resume Widget -->
+        <div class="col-md-4">
+            <div class="card" style="padding: 3rem;">
+                <h6 style="margin-bottom: 2rem;">Resume Status</h6>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-tasks" style="font-size: 40px; color: #4caf50; margin-right: 2rem;"></i>
+                    <p>Your resume is up to date!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights Widget -->
+        <div class="col-md-4">
+            <div class="card" style="padding: 3rem;">
+                <h6 style="margin-bottom: 2rem;">Insights</h6>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-chart-pie" style="font-size: 40px; color: #2196f3; margin-right: 2rem;"></i>
+                    <p>You've applied to 10 jobs this month.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="col-md-12">
+            <div class="card" style="padding: 3rem;">
+                <h6 style="margin-bottom: 2rem;">Recent Activities</h6>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-user-clock" style="font-size: 40px; color: #ff5722; margin-right: 2rem;"></i>
+                    <p>Viewed 15 job postings recently.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
