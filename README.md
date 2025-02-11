@@ -2,6 +2,8 @@
 
 OpportunAI is an intelligent, AI-driven job application assistant designed to help you streamline your job search and boost your career prospects. With features tailored to modern job seekers, OpportunAI simplifies everything from crafting resumes and cover letters to tracking application statuses and preparing for interviews.
 
+![Alt text](Media/opportunai.webp)
+
 ## Features
 
 ### AI-Powered Resume & Cover Letter Generator
