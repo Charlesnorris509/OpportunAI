@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpportunAI</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'home' %}">OpportunAI</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            <span class="text-muted">&copy; 2025 OpportunAI. All rights reserved.</span>
+        </div>
+    </footer>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 4rem; background-color: #f9f9f9; min-height: 100vh;">
+    <h4 style="margin-bottom: 4rem;">Welcome, {{ user_name }}</h4>
+    <div class="row">
+        <!-- Profile Widget -->
+        <div class="col-md-4">
+            <div class="card" style="padding: 3rem; text-align: center;">
+                <img src="{{ user_avatar_url }}" alt="Avatar" class="avatar" style="width: 80px; height: 80px; margin: auto;">
+                <h6 style="margin-top: 2rem;">{{ user_name }}</h6>
+                <p class="text-secondary">Full Stack Developer</p>
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary" style="margin-top: 2rem;">Edit Profile</a>
+            </div>
+        </div>
+
+        <!-- Resume Widget -->
+        <div class="col-md-4">
+            <div class="card" style="padding: 3rem;">
+                <h6 style="margin-bottom: 2rem;">Resume Status</h6>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-tasks" style="font-size: 40px; color: #4caf50; margin-right: 2rem;"></i>
+                    <p>Your resume is up to date!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights Widget -->
+        <div class="col-md-4">
+            <div class="card" style="padding: 3rem;">
+                <h6 style="margin-bottom: 2rem;">Insights</h6>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-chart-pie" style="font-size: 40px; color: #2196f3; margin-right: 2rem;"></i>
+                    <p>You've applied to 10 jobs this month.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="col-md-12">
+            <div class="card" style="padding: 3rem;">
+                <h6 style="margin-bottom: 2rem;">Recent Activities</h6>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-user-clock" style="font-size: 40px; color: #ff5722; margin-right: 2rem;"></i>
+                    <p>Viewed 15 job postings recently.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-main" style="padding: 2rem; background-color: #f9f9f9; min-height: 100vh;">
+    {% if is_loading %}
+        <div class="loading-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    {% else %}
+        <!-- Stats Section -->
+        <div class="row stats-grid" style="margin-bottom: 2rem;">
+            <div class="col-sm-6 col-md-3">
+                <div class="card stats-card dashboard-paper" style="padding: 1rem; text-align: center;">
+                    <div class="stats-content" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-clipboard-list stats-icon" style="font-size: 2rem; margin-right: 1rem;"></i>
+                        <div class="stats-details">
+                            <h6 class="stats-value">{{ stats.applications }}</h6>
+                            <p class="text-secondary">Applications</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="card stats-card dashboard-paper" style="padding: 1rem; text-align: center;">
+                    <div class="stats-content" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-chart-line stats-icon" style="font-size: 2rem; margin-right: 1rem;"></i>
+                        <div class="stats-details">
+                            <h6 class="stats-value">{{ stats.interviews }}</h6>
+                            <p class="text-secondary">Interviews</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="card stats-card dashboard-paper" style="padding: 1rem; text-align: center;">
+                    <div class="stats-content" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user-friends stats-icon" style="font-size: 2rem; margin-right: 1rem;"></i>
+                        <div class="stats-details">
+                            <h6 class="stats-value">{{ stats.connections }}</h6>
+                            <p class="text-secondary">Connections</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="card stats-card dashboard-paper" style="padding: 1rem; text-align: center;">
+                    <div class="stats-content" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-chart-pie stats-icon" style="font-size: 2rem; margin-right: 1rem;"></i>
+                        <div class="stats-details">
+                            <h6 class="stats-value">{{ stats.profileViews }}</h6>
+                            <p class="text-secondary">Profile Views</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="card dashboard-paper activity-section" style="padding: 2rem;">
+            <h6 class="section-title" style="margin-bottom: 1rem;">Recent Activity</h6>
+            <ul class="list-group">
+                {% for activity in recent_activities %}
+                    <li class="list-group-item activity-item" style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <i class="activity-icon fas {{ activity.icon_class }}" style="font-size: 1.5rem; margin-right: 1rem;"></i>
+                        <div>
+                            <h6>{{ activity.title }}</h6>
+                            {% if activity.company %}
+                                <p class="company-name" style="margin: 0;">{{ activity.company }}{% if activity.position %} - {{ activity.position }}{% endif %}</p>
+                            {% endif %}
+                            {% if activity.description %}
+                                <p class="activity-description" style="margin: 0;">{{ activity.description }}</p>
+                            {% endif %}
+                            <small class="text-muted activity-date">{{ activity.date }}</small>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container" style="padding: 2rem;">
+    <h1>Edit Profile</h1>
+    <form method="POST" action="{% url 'edit_profile' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ user.name }}"
+                required
+                class="form-control"
+            />
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ user.email }}"
+                required
+                class="form-control"
+            />
+        </div>
+        <div class="form-group">
+            <label for="bio">Bio:</label>
+            <textarea
+                id="bio"
+                name="bio"
+                class="form-control"
+            >{{ user.bio }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% endif %}
+</div>
+{% endblock %}

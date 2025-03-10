@@ -1,0 +1,123 @@
+/* Dashboard.css */
+
+.dashboard-main {
+  padding: 24px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* Stats cards */
+.stats-grid {
+  margin-bottom: 24px;
+}
+
+.stats-card {
+  height: 100%;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stats-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stats-icon {
+  color: #1976d2;
+  font-size: 2.5rem !important;
+}
+
+.stats-details {
+  flex-grow: 1;
+}
+
+.stats-value {
+  font-weight: 600 !important;
+  color: #1976d2;
+}
+
+/* Activity section */
+.activity-section {
+  padding: 24px;
+}
+
+.section-title {
+  margin-bottom: 16px !important;
+  color: #333;
+  font-weight: 600 !important;
+}
+
+.activity-item {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-item:hover {
+  background-color: #f8f9fa;
+}
+
+.activity-icon {
+  color: #1976d2;
+}
+
+.company-name {
+  display: block;
+  color: #666;
+  font-weight: 500;
+  margin: 4px 0;
+}
+
+.activity-description {
+  color: #666;
+  margin: 4px 0;
+}
+
+.activity-date {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .dashboard-main {
+    padding: 16px;
+  }
+  
+  .stats-grid {
+    margin-bottom: 16px;
+  }
+  
+  .activity-section {
+    padding: 16px;
+  }
+}
+
+/* Paper components styling */
+.dashboard-paper {
+  background-color: #ffffff;
+  border-radius: 8px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dashboard-paper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
